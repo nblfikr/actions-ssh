@@ -1,0 +1,6 @@
+name: 'base64-decode-to-file'
+description: 'This action will help you decode a base64 string to a file'
+author: 'nblfikr'
+runs:
+  using: 'go'
+  main: 'dist/index.js'
