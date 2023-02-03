@@ -12,29 +12,6 @@ import (
 	"golang.org/x/crypto/ssh/knownhosts"
 )
 
-func getInput(input string) string {
-	return os.Getenv("INPUT_" + strings.ToUpper(input))
-}
-
-func prepare() {
-	err := godotenv.Load()
-	if err != nil {
-		log.Fatalf("Error loading .env file")
-	}
-}
-
-func shell(cmd string, s *ssh.Session) {
-	var b bytes.Buffer
-	s.Stdout = &b
-
-	err := s.Run(cmd)
-	if err != nil {
-		log.Fatal("Failed to run: " + err.Error())
-	}
-
-	fmt.Println(b.String())
-}
-
 type Environment struct {
 	Host string
 	Port string
@@ -46,17 +23,27 @@ type Environment struct {
 
 	Command string
 }
+type Client struct {
+	Config     *Environment
+	Connection *ssh.Client
+	Session    *ssh.Session
+}
+
+func getInput(input string) string {
+	return os.Getenv("INPUT_" + strings.ToUpper(input))
+}
+
+func prepare() {
+	err := godotenv.Load()
+	er("Error loading .env file: ", err)
+}
 
 func config(e *Environment) *ssh.ClientConfig {
 	hostKey, err := knownhosts.New(e.KnownHosts)
-	if err != nil {
-		log.Fatal(err)
-	}
+	er("Failed to load known_hosts", err)
 
 	privateKey, err := os.ReadFile(e.PrivateKey)
-	if err != nil {
-		log.Fatal(err)
-	}
+	er("Failed to load private key", err)
 
 	signer, err := ssh.ParsePrivateKeyWithPassphrase(privateKey, []byte(e.Passphrase))
 
@@ -69,22 +56,33 @@ func config(e *Environment) *ssh.ClientConfig {
 	}
 }
 
-func (e *Environment) dial() *ssh.Client {
+func er(message string, err error) {
+	if err != nil {
+		log.Fatal(message, err.Error())
+	}
+}
+
+func (e *Environment) newClient() *Client {
 	addr := strings.Join([]string{e.Host, e.Port}, ":")
 
-	client, err := ssh.Dial("tcp", addr, config(e))
-	if err != nil {
-		log.Fatal("Failed to dial: ", err)
-	}
+	connection, err := ssh.Dial("tcp", addr, config(e))
+	er("Failed to dial: ", err)
 
-	return client
+	session, err := connection.NewSession()
+	er("Failed to create session: ", err)
+
+	return &Client{
+		Config:     e,
+		Connection: connection,
+		Session:    session,
+	}
 }
 
 func main() {
 
 	prepare()
 
-	input := Environment{
+	env := &Environment{
 		Host:       getInput("host"),
 		Port:       getInput("port"),
 		User:       getInput("user"),
@@ -94,14 +92,16 @@ func main() {
 		Command:    getInput("command"),
 	}
 
-	client := input.dial()
-	defer client.Close()
+	client := env.newClient()
+	defer client.Connection.Close()
+	defer client.Session.Close()
 
-	session, err := client.NewSession()
-	if err != nil {
-		log.Fatal("Failed to create session: ", err)
-	}
-	defer session.Close()
+	s := client.Session
+	var b bytes.Buffer
+	s.Stdout = &b
 
-	shell(input.Command, session)
+	err := s.Run(env.Command)
+	er("Failed to run: ", err)
+
+	fmt.Print(b.String())
 }
