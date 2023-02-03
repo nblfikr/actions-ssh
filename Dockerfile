@@ -7,9 +7,3 @@ COPY . .
 RUN go mod download
 
 RUN CGO_ENABLED=0 go build -o /go/bin/app
-
-FROM alpine:3.17
-
-COPY --from=builder /go/bin/app /
-
-ENTRYPOINT ["/app"]
