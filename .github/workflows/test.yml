@@ -1,0 +1,14 @@
+name: Test
+
+on: [main]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    name: A job to say hello
+    steps:
+      - name: Akses SSH
+        uses: nblfikr/actions-ssh@main
+        with:
+          host: ${{ secrets.HOST}}
+      - run: echo "was here"
