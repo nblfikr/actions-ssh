@@ -2,7 +2,6 @@ package main
 
 import (
 	"bytes"
-	"fmt"
 	"log"
 	"os"
 	"strings"
@@ -96,12 +95,9 @@ func main() {
 	defer client.Connection.Close()
 	defer client.Session.Close()
 
-	s := client.Session
 	var b bytes.Buffer
-	s.Stdout = &b
+	client.Session.Stdout = &b
 
-	err := s.Run(env.Command)
+	err := client.Session.Run(env.Command)
 	er("Failed to run: ", err)
-
-	fmt.Print(b.String())
 }
