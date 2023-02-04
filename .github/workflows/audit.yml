@@ -1,0 +1,24 @@
+name: Audit
+
+on:
+  - push
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Setup Go Version
+        uses: actions/setup-go@v3
+        with:
+          go-version: 1.19.x
+
+      - name: Verify dependecies
+        run: go mod verify
+      
+      - name: Install dependecies
+        run: go install
+
+      - name: Build
+        run: go build -v ./...
