@@ -17,8 +17,8 @@ jobs:
           KNOWN_HOSTS: ${{ secrets.KNOWN_HOSTS }}
           PRIVATE_KEY: ${{ secrets.PRIVATE_KEY }}
         run: |
-          echo $KNOWN_HOSTS | base64 --decode > ~/tmp/known_hosts
-          echo $PRIVATE_KEY | base64 --decode > ~/tmp/private_key
+          echo $KNOWN_HOSTS | base64 --decode > /tmp/known_hosts
+          echo $PRIVATE_KEY | base64 --decode > /tmp/private_key
 
       - name: Akses SSH
         uses: nblfikr/actions-ssh@main
@@ -27,6 +27,6 @@ jobs:
           port: ${{ secrets.PORT }}
           user: ${{ secrets.USER }}
           passphrase: ${{ secrets.PASSPHRASE }}
-          private_key: ~/tmp/known_hosts
-          known_hosts: ~/tmp/private_key
+          private_key: /tmp/known_hosts
+          known_hosts: /tmp/private_key
           command: uptime -p
