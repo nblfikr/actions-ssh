@@ -79,8 +79,6 @@ func (e *Environment) newClient() *Client {
 
 func main() {
 
-	prepare()
-
 	env := &Environment{
 		Host:       getInput("host"),
 		Port:       getInput("port"),
