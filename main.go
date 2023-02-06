@@ -2,6 +2,7 @@ package main
 
 import (
 	"bytes"
+	"fmt"
 	"log"
 	"os"
 	"strings"
@@ -98,4 +99,6 @@ func main() {
 
 	err := client.Session.Run(env.Command)
 	er("Failed to run: ", err)
+
+	fmt.Println(b.String())
 }
