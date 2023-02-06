@@ -13,19 +13,13 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - name: decode known_hosts
-        uses: nblfikr/base64-decode-to-file@v1
-        id: known_hosts
-        with:
-          filename: known_hosts
-          base64: ${{ secrets.KNOWN_HOSTS }}
-
-      - name: decode private key to file
-        uses: nblfikr/base64-decode-to-file@v1
-        id: private_key
-        with:
-          filename: private_key
-          base64: ${{ secrets.PRIVATE_KEY }}
+      - name: Retrieve the secret and decode it to known_hosts file
+        env:
+          KNOWN_HOSTS: ${{ secrets.KNOWN_HOSTS }}
+          PRIVATE_KEY: ${{ secrets.PRIVATE_KEY }}
+        run: |
+          echo $KNOWN_HOSTS | base64 --decode > /home/runner/work/actions-ssh/actions-ssh/known_hosts
+          echo $PRIVATE_KEY | base64 --decode > /home/runner/work/actions-ssh/actions-ssh/private_key
 
       - name: Akses SSH
         uses: nblfikr/actions-ssh@main
@@ -33,7 +27,7 @@ jobs:
           host: ${{ secrets.HOST }}
           port: ${{ secrets.PORT }}
           user: ${{ secrets.USER }}
-          private_key: ${{ steps.private_key.outputs.fullpath }}
+          known_hosts: /home/runner/work/actions-ssh/actions-ssh/known_hosts
+          private_key: /home/runner/work/actions-ssh/actions-ssh/private_key
           passphrase: ${{ secrets.PASSPHRASE }}
-          known_hosts: ${{ steps.known_hosts.outputs.fullpath }}
           command: 'uptime -p'
