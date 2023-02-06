@@ -18,16 +18,20 @@ jobs:
           KNOWN_HOSTS: ${{ secrets.KNOWN_HOSTS }}
           PRIVATE_KEY: ${{ secrets.PRIVATE_KEY }}
         run: |
-          echo $KNOWN_HOSTS | base64 --decode > /home/runner/work/actions-ssh/actions-ssh/known_hosts
-          echo $PRIVATE_KEY | base64 --decode > /home/runner/work/actions-ssh/actions-ssh/private_key
+          echo $KNOWN_HOSTS | base64 --decode > ${{ github.workspace }}/known_hosts
+          echo $PRIVATE_KEY | base64 --decode > ${{ github.workspace }}/private_key
 
-      - name: Akses SSH
-        uses: nblfikr/actions-ssh@main
-        with:
-          host: ${{ secrets.HOST }}
-          port: ${{ secrets.PORT }}
-          user: ${{ secrets.USER }}
-          known_hosts: /home/runner/work/actions-ssh/actions-ssh/known_hosts
-          private_key: /home/runner/work/actions-ssh/actions-ssh/private_key
-          passphrase: ${{ secrets.PASSPHRASE }}
-          command: 'uptime -p'
+      - name: Echooo
+        run: |
+          ls ${{ github.workspace }}
+
+      # - name: Akses SSH
+      #   uses: nblfikr/actions-ssh@main
+      #   with:
+      #     host: ${{ secrets.HOST }}
+      #     port: ${{ secrets.PORT }}
+      #     user: ${{ secrets.USER }}
+      #     known_hosts: /home/runner/work/actions-ssh/actions-ssh/known_hosts
+      #     private_key: /home/runner/work/actions-ssh/actions-ssh/private_key
+      #     passphrase: ${{ secrets.PASSPHRASE }}
+      #     command: 'uptime -p'
