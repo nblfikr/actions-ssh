@@ -6,6 +6,7 @@ import (
 	"log"
 	"os"
 	"strings"
+	"time"
 
 	"github.com/joho/godotenv"
 	"golang.org/x/crypto/ssh"
@@ -53,6 +54,7 @@ func config(e *Environment) *ssh.ClientConfig {
 			ssh.PublicKeys(signer),
 		},
 		HostKeyCallback: hostKey,
+		Timeout:         time.Duration(time.Second * 10),
 	}
 }
 
@@ -100,7 +102,7 @@ func main() {
 	err := client.Session.Run(env.Command)
 	er("Failed to run: ", err)
 
-	fmt.Println(b.String())
+	fmt.Print(b.String())
 
 	os.Exit(0)
 }
