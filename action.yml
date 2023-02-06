@@ -3,7 +3,26 @@ description: 'This action will help for accessing ssh through Github Actions'
 author: 'nblfikr'
 inputs:
   host:
-    description: "host"
+    description: "host target"
+    required: true
+  port:
+    description: "port"
+    required: true
+    default: 22
+  user:
+    description: "user host target"
+    required: true
+  private_key:
+    description: "private key path file"
+    required: true
+  passphrase:
+    description: "private key passphrase"
+    required: true
+  known_hosts:
+    description: "known hosts path file"
+    required: true
+  command:
+    description: "your command here"
     required: true
 runs:
   using: 'docker'
