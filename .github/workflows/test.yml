@@ -9,16 +9,23 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
-    name: SSH JOB TESTING
+    name: A job to say hello
     steps:
       - uses: actions/checkout@v3
-      - name: Retrieve the secret and decode it to known_hosts file
-        env:
-          KNOWN_HOSTS: ${{ secrets.KNOWN_HOSTS }}
-          PRIVATE_KEY: ${{ secrets.PRIVATE_KEY }}
-        run: |
-          echo $KNOWN_HOSTS | base64 --decode > /tmp/known_hosts
-          echo $PRIVATE_KEY | base64 --decode > /tmp/private_key
+
+      - name: decode known_hosts
+        uses: nblfikr/base64-decode-to-file@v1
+        id: known_hosts
+        with:
+          filename: known_hosts
+          base64: ${{ secrets.KNOWN_HOSTS }}
+
+      - name: decode private key to file
+        uses: nblfikr/base64-decode-to-file@v1
+        id: private_key
+        with:
+          filename: private_key
+          base64: ${{ secrets.PRIVATE_KEY }}
 
       - name: Akses SSH
         uses: nblfikr/actions-ssh@main
@@ -26,7 +33,7 @@ jobs:
           host: ${{ secrets.HOST }}
           port: ${{ secrets.PORT }}
           user: ${{ secrets.USER }}
+          private_key: ${{ steps.private_key.outputs.fullpath }}
           passphrase: ${{ secrets.PASSPHRASE }}
-          private_key: /tmp/private_key
-          known_hosts: /tmp/known_hosts
-          command: uptime -p
+          known_hosts: ${{ steps.known_hosts.outputs.fullpath }}
+          command: 'uptime -p'
