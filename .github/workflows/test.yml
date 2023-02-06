@@ -27,6 +27,6 @@ jobs:
           port: ${{ secrets.PORT }}
           user: ${{ secrets.USER }}
           passphrase: ${{ secrets.PASSPHRASE }}
-          private_key: /tmp/known_hosts
-          known_hosts: /tmp/private_key
+          private_key: /tmp/private_key
+          known_hosts: /tmp/known_hosts
           command: uptime -p
