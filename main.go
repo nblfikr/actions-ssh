@@ -101,4 +101,6 @@ func main() {
 	er("Failed to run: ", err)
 
 	fmt.Println(b.String())
+
+	os.Exit(0)
 }
