@@ -27,3 +27,11 @@ inputs:
 runs:
   using: 'docker'
   image: 'Dockerfile'
+  args:
+    - ${{ inputs.host }}
+    - ${{ inputs.port }}
+    - ${{ inputs.user }}
+    - ${{ inputs.private_key }}
+    - ${{ inputs.passphrase }}
+    - ${{ inputs.known_hosts }}
+    - ${{ inputs.command }}
