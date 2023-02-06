@@ -25,13 +25,13 @@ jobs:
         run: |
           ls ${{ github.workspace }}
 
-      # - name: Akses SSH
-      #   uses: nblfikr/actions-ssh@main
-      #   with:
-      #     host: ${{ secrets.HOST }}
-      #     port: ${{ secrets.PORT }}
-      #     user: ${{ secrets.USER }}
-      #     known_hosts: /home/runner/work/actions-ssh/actions-ssh/known_hosts
-      #     private_key: /home/runner/work/actions-ssh/actions-ssh/private_key
-      #     passphrase: ${{ secrets.PASSPHRASE }}
-      #     command: 'uptime -p'
+      - name: Akses SSH
+        uses: nblfikr/actions-ssh@main
+        with:
+          host: ${{ secrets.HOST }}
+          port: ${{ secrets.PORT }}
+          user: ${{ secrets.USER }}
+          known_hosts: ${{ github.workspace }}/known_hosts
+          private_key: ${{ github.workspace }}/private_key
+          passphrase: ${{ secrets.PASSPHRASE }}
+          command: 'uptime -p'
